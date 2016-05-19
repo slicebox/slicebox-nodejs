@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>SBX-NodeJS Demo</h1>
+    <p>Patients</p>
+    <ul>
+      {{#patients}}
+      <li>{{#patientName}}{{value}}{{/patientName}}</li>
+      {{/patients}}
+    </ul>
+  </body>
+</html>
