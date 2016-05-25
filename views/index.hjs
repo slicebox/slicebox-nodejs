@@ -6,9 +6,7 @@
   </head>
   <body>
     <h1>SBX-NodeJS Demo</h1>
-    {{#photos}}
-        <img src="{{value}}" />
-    {{/photos}}
+    <img src="{{photoUrl}}" />
     <p>Patients</p>
     <ul>
       {{#patients}}

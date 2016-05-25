@@ -15,7 +15,8 @@ router.get('/logout', function(req, res){
 router.get('/', loggedIn, function(req, res, next) {
     listPatients(function(error, response, data) {
         if (!error && response.statusCode === 200) {
-            res.render('index', {patients: data, photos: req.user.photos});
+            console.log(req.user);
+            res.render('index', {patients: data, photoUrl: req.user.photoUrl});
         } else {
             res.send("Error: " + error + ", response: " + JSON.stringify(response));
         }

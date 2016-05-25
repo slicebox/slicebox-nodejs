@@ -31,7 +31,8 @@ var sequelize = new Sequelize('database', 'username', 'password', {
 
 var User = sequelize.define('user', {
     id: { type: Sequelize.STRING, primaryKey: true },
-    name: Sequelize.STRING
+    name: Sequelize.STRING,
+    photoUrl: Sequelize.STRING
 });
 
 User.sync();
@@ -59,7 +60,7 @@ passport.use(new GoogleStrategy({
         clientSecret: "GHyzJ_n23S5tumztUlh5YPaw",
         callbackURL: "http://localhost:3000/auth/google/callback"
     }, function(accessToken, refreshToken, profile, done) {
-        User.findOrCreate({ where: { id: profile.id }, defaults: { name: profile.displayName } })
+        User.findOrCreate({ where: { id: profile.id }, defaults: { name: profile.displayName, photoUrl: profile.photos[0].value } })
             .spread(function (user) {
                 return done(null, user);
             }).catch(function (err) {
@@ -75,7 +76,7 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(function(id, cb) {
     User.findById(id)
         .then(function (user) {
-            cb(null, user);
+            cb(null, user.dataValues);
         }).catch(function (err) {
             cb(err, null);
         });
