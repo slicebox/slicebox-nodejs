@@ -10,7 +10,8 @@ var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Sequelize = require('sequelize');
 
-var routes = require('./routes/index');
+var userRoutes = require('./routes/user');
+var indexRoutes = require('./routes/index');
 
 var app = express();
 
@@ -82,7 +83,8 @@ passport.deserializeUser(function(id, cb) {
         });
 });
 
-app.use('/', routes);
+app.use('/', indexRoutes);
+app.use('/', userRoutes);
 
 app.get('/auth/google',
     passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
