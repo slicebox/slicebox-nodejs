@@ -3,12 +3,13 @@ var config = require('../config');
 
 var sbx = {};
 
-function sbxGet(url) {
+function sbxGet(url, json) {
     return {
         method: 'GET',
         uri: config.sbxBaseUrl + url,
-        auth: { user: 'admin', password: 'admin' },
-        json: true,
+        auth: { user: config.sbxUser, password: config.sbxPassword },
+        json: json !== undefined ? json : true,
+        encoding: json === undefined || json ? undefined : null,
         resolveWithFullResponse: true
     };
 }
@@ -17,7 +18,7 @@ function sbxPost(url, entity, json) {
     return {
         method: 'POST',
         uri: config.sbxBaseUrl + url,
-        auth: { user: 'admin', password: 'admin' },
+        auth: { user: config.sbxUser, password: config.sbxPassword },
         body: entity,
         json: json !== undefined ? json : true,
         resolveWithFullResponse: true
@@ -61,6 +62,37 @@ function createImportSessionForUser(userId, next) {
 
 sbx.listPatients = function(sessionId, next) {
     return sbxRequest(sbxGet('/metadata/patients?count=-1&sources=import:' + sessionId), next);
+};
+
+sbx.listStudiesForPatient = function(sessionId, patientId, next) {
+    console.log('/metadata/studies?count=-1&patientid=' + patientId + '&sources=import:' + sessionId);
+    return sbxRequest(sbxGet('/metadata/studies?count=-1&patientid=' + patientId + '&sources=import:' + sessionId), next);
+};
+
+sbx.listSeriesForStudy = function(sessionId, studyId, next) {
+    return sbxRequest(sbxGet('/metadata/series?count=-1&studyid=' + studyId + '&sources=import:' + sessionId), next);
+};
+
+sbx.listImagesForSeries = function(sessionId, seriesId, next) {
+    return sbxRequest(sbxGet('/metadata/images?count=-1&seriesid=' + seriesId + '&sources=import:' + sessionId), next);
+};
+
+sbx.imageInformation = function(sessionId, imageId, next) {
+    return sbxRequest(sbxGet('/images/' + imageId + '/imageinformation'), next);
+};
+
+sbx.pngImage = function(sessionId, imageId, frameNumber, imageHeight, next) {
+    var url = '/images/' + imageId + '/png';
+    if (frameNumber || imageHeight) {
+        url = url + '?'
+    }
+    if (frameNumber) {
+        url = url + 'framenumber=' + frameNumber;
+    }
+    if (imageHeight) {
+        url = url + 'imageheight=' + imageHeight;
+    }
+    return sbxRequest(sbxGet(url, false), next);
 };
 
 sbx.findOrCreateImportSessionForUser = function(userId, next) {

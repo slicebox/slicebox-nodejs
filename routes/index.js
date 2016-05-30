@@ -12,11 +12,11 @@ router.get('/', util.loggedIn, function(req, res, next) {
     sbx.findOrCreateImportSessionForUser(req.user.id, next).then(function (sessionId) {
         sbx.listPatients(sessionId, next).then(function (patients) {
             res.render('index', {patients: patients, photoUrl: req.user.photoUrl});
-        }).catch(function(error) {
-            var err = new Error('Cannot connect to slicebox');
-            err.status = 503;
-            next(err);
         });
+    }).catch(function(error) {
+        var err = new Error('Cannot connect to slicebox');
+        err.status = 503;
+        next(err);
     });
 });
 
@@ -31,8 +31,22 @@ router.post('/upload', util.loggedIn, upload.array('files'), function (req, res,
     });
 });
 
-router.get('/test', util.loggedIn, function (req, res, next) {
-    res.send('Test page');
+router.get('/studies', util.loggedIn, function(req, res, next) {
+    var patientId = req.query.patientid
+    sbx.findOrCreateImportSessionForUser(req.user.id, next).then(function (sessionId) {
+        sbx.listStudiesForPatient(sessionId, patientId, next).then(function (studies) {
+            res.json(studies);
+        });
+    });
+});
+
+router.get('/series', util.loggedIn, function(req, res, next) {
+    var studyId = req.query.studyid
+    sbx.findOrCreateImportSessionForUser(req.user.id, next).then(function (sessionId) {
+        sbx.listSeriesForStudy(sessionId, studyId, next).then(function (series) {
+            res.json(series);
+        });
+    });
 });
 
 module.exports = router;

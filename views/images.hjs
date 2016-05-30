@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Images for series {{ seriesId }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h3>Images for series {{ seriesId }}</h3>
+    {{#images}}
+        {{#frames}}
+            <img src="/images/{{id}}/png?framenumber={{.}}&imageheight=150" />
+        {{/frames}}
+    {{/images}}
+    <hr>
+    <a href='/'>Back to list</a>
+  </body>
+</html>

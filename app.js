@@ -6,12 +6,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var hogan = require('hogan-express');
+var Sequelize = require('sequelize');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var Sequelize = require('sequelize');
 
 var userRoutes = require('./routes/user');
 var indexRoutes = require('./routes/index');
+var imagesRoutes = require('./routes/images');
 
 var app = express();
 
@@ -28,7 +29,6 @@ var sequelize = new Sequelize('database', 'username', 'password', {
 
     storage: 'db.sqlite'
 });
-//var sequelize = new Sequelize('sqlite://db.sqlite');
 
 var User = sequelize.define('user', {
     id: { type: Sequelize.STRING, primaryKey: true },
@@ -59,14 +59,14 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
         clientID: "99967977588-c2967bf2lcupmhmdeqrak0pnul133tp9.apps.googleusercontent.com",
         clientSecret: "GHyzJ_n23S5tumztUlh5YPaw",
-        callbackURL: "http://localhost:3000/auth/google/callback"
+        callbackURL: "http://localhost:3000/users/auth/google/callback"
     }, function(accessToken, refreshToken, profile, done) {
         User.findOrCreate({ where: { id: profile.id }, defaults: { name: profile.displayName, photoUrl: profile.photos[0].value } })
             .spread(function (user) {
                 return done(null, user);
             }).catch(function (err) {
-                return done(err, null);
-            });
+            return done(err, null);
+        });
     }
 ));
 
@@ -79,22 +79,13 @@ passport.deserializeUser(function(id, cb) {
         .then(function (user) {
             cb(null, user.dataValues);
         }).catch(function (err) {
-            cb(err, null);
-        });
+        cb(err, null);
+    });
 });
 
 app.use('/', indexRoutes);
-app.use('/', userRoutes);
-
-app.get('/auth/google',
-    passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
-
-app.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function(req, res) {
-        res.redirect(req.session.returnTo || '/');
-        delete req.session.returnTo;
-    });
+app.use('/images', imagesRoutes);
+app.use('/users', userRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

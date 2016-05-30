@@ -6,3 +6,18 @@ body {
 a {
   color: #00B7FF;
 }
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  background-color: #eee;
+  cursor: pointer;
+  padding: 5px;
+  transition: 0.4s;
+}
+
+li:hover {
+  background-color: #ddd;
+}

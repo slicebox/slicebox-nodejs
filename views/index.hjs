@@ -3,11 +3,13 @@
   <head>
     <title>{{ title }}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="javascripts/main.js"></script>
+    <script src="javascripts/ajax.js"></script>
   </head>
   <body>
     <h1>SBX-NodeJS Demo</h1>
     <img src="{{photoUrl}}" />
-    <a href="/logout">Logout</a>
+    <a href="/users/logout">Logout</a>
     <form method="post" action="/upload" enctype="multipart/form-data">
       <input type="file" name="files" multiple>
       <input type="submit" value="Submit">
@@ -15,7 +17,9 @@
     <p>Patients</p>
     <ul>
       {{#patients}}
-      <li>{{#patientName}}{{value}}{{/patientName}}</li>
+        <li id="patient-{{id}}" onclick="event.stopPropagation();getStudies({{id}})">
+          {{#patientName}}{{value}}{{/patientName}}
+        </li>
       {{/patients}}
     </ul>
   </body>

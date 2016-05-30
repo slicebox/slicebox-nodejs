@@ -6,6 +6,6 @@
   </head>
   <body>
     <h1>SBX-NodeJS Demo</h1>
-    <a href="/auth/google">Sign In with Google</a>
+    <a href="/users/auth/google">Sign In with Google</a>
   </body>
 </html>
